@@ -450,12 +450,24 @@ class SupertonicTTS {
   /// The [text] parameter can be any length. Long text is automatically chunked
   /// and synthesized in segments with optional silence between chunks.
   ///
-  /// The [language] parameter must be one of the supported language codes:
-  /// - 'en' - English
-  /// - 'ko' - Korean
-  /// - 'es' - Spanish
-  /// - 'pt' - Portuguese
-  /// - 'fr' - French
+  /// The [language] parameter must be one of the 31 supported language codes
+  /// (see [TTSLanguage.all]): 'en', 'ko', 'ja', 'ar', 'bg', 'cs', 'da', 'de',
+  /// 'el', 'es', 'et', 'fi', 'fr', 'hi', 'hr', 'hu', 'id', 'it', 'lt', 'lv',
+  /// 'nl', 'pl', 'pt', 'ro', 'ru', 'sk', 'sl', 'sv', 'tr', 'uk', 'vi' —
+  /// or 'na' for language-agnostic synthesis when the input language is
+  /// unknown.
+  ///
+  /// The [text] may contain expression tags for natural, human-sounding
+  /// nuance — simple tags such as `<laugh>`, `<breath>`, and `<sigh>` are
+  /// passed through to the model verbatim:
+  ///
+  /// ```dart
+  /// await tts.synthesize(
+  ///   'Well <laugh> that was unexpected!',
+  ///   language: 'en',
+  ///   voiceStyle: 'F2',
+  /// );
+  /// ```
   ///
   /// The [voiceStyle] parameter selects one of the 10 available voices:
   /// - Male: 'M1', 'M2', 'M3', 'M4', 'M5'
@@ -518,7 +530,7 @@ class SupertonicTTS {
     final effectiveConfig = config ?? const TTSConfig();
     final style = await _loadStyle(voiceStyle ?? 'M1');
 
-    final maxLen = language == 'ko' ? 120 : 300;
+    final maxLen = (language == 'ko' || language == 'ja') ? 120 : 300;
     final chunks = _chunkText(text, maxLen: maxLen);
     final langList = List.filled(chunks.length, language);
     List<double>? wavCat;

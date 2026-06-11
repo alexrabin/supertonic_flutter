@@ -1,12 +1,13 @@
 # Supertonic TTS Flutter
 
-Multilingual text-to-speech (TTS) for Flutter. Powered by ONNX Runtime for fast local inference.
+Multilingual text-to-speech (TTS) for Flutter. Powered by ONNX Runtime for fast local inference, using the [Supertonic 3](https://huggingface.co/Supertone/supertonic-3) models.
 
 > **Note:** This is an unofficial Flutter port of the [Supertonic](https://github.com/supertone-inc/supertonic) project.
 
 ## Features
 
-- 🌍 **Multilingual Support** - English, Korean, Spanish, Portuguese, and French
+- 🌍 **31 Languages** - `en`, `ko`, `ja`, `ar`, `bg`, `cs`, `da`, `de`, `el`, `es`, `et`, `fi`, `fr`, `hi`, `hr`, `hu`, `id`, `it`, `lt`, `lv`, `nl`, `pl`, `pt`, `ro`, `ru`, `sk`, `sl`, `sv`, `tr`, `uk`, `vi` — plus a language-agnostic mode (`na`)
+- 😄 **Expression Tags** - Supports simple tags such as `<laugh>`, `<breath>`, and `<sigh>` for natural, human-sounding speech
 - 🎭 **Multiple Voice Styles** - 10 voices (5 male, 5 female)
 - ⚡ **Local Processing** - Runs fully on-device
 - 🎛️ **Customizable** - Adjustable speech speed and quality settings
@@ -39,7 +40,7 @@ Add this to `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  supertonic_flutter: ^1.0.0
+  supertonic_flutter: ^2.0.0
 ```
 
 ## Quick Start
@@ -62,11 +63,35 @@ final result = await tts.synthesize(
 - bundled assets
 - download from Hugging Face if needed
 
+### Expression Tags
+
+Add natural, human-sounding nuance with simple inline tags such as `<laugh>`, `<breath>`, and `<sigh>` — they are passed straight through to the model:
+
+```dart
+final result = await tts.synthesize(
+  'Well <laugh> that was unexpected!',
+  language: 'en',
+  voiceStyle: 'F2',
+);
+```
+
+### Language-Agnostic Mode
+
+Not sure which language your text is in? Pass `language: 'na'` and Supertonic handles the input in a language-agnostic way:
+
+```dart
+final result = await tts.synthesize(
+  'Bonjour and 안녕하세요!',
+  language: 'na',
+  voiceStyle: 'M1',
+);
+```
+
 ## Model Setup
 
 ### Option A: Auto-Download (Recommended)
 
-No manual setup required. Models are downloaded from [Hugging Face](https://huggingface.co/Supertone/supertonic-2) on first use (~268 MB).
+No manual setup required. Models are downloaded from [Hugging Face](https://huggingface.co/Supertone/supertonic-3) on first use (~401 MB).
 
 ```dart
 // Just initialize — models download automatically if not found
@@ -86,9 +111,11 @@ if (!await SupertonicTTS.modelsReady()) {
 }
 ```
 
+> **Upgrading from 1.x?** Version 2.0.0 switches to the Supertonic 3 models. They are cached in a new `supertonic_models_v3` directory; any Supertonic 2 model cache from a previous version is deleted automatically and the new models are downloaded on first use.
+
 ### Option B: Bundle Assets Manually
 
-Download the model files from [Hugging Face](https://huggingface.co/Supertone/supertonic-2) and add them to your app's assets. This avoids runtime downloads but increases app size by ~268 MB.
+Download the model files from [Hugging Face](https://huggingface.co/Supertone/supertonic-3) and add them to your app's assets. This avoids runtime downloads but increases app size by ~401 MB.
 
 ```
 assets/

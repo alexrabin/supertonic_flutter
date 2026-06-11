@@ -1,3 +1,11 @@
+## 2.0.0
+
+- Upgraded to [Supertonic 3](https://huggingface.co/Supertone/supertonic-3) models (~401 MB, downloaded from `Supertone/supertonic-3`)
+- Expanded language support from 5 to 31 languages, plus a language-agnostic mode (`language: 'na'`) for input whose language is unknown
+- Documented expression tag support: simple inline tags such as `<laugh>`, `<breath>`, and `<sigh>` add natural expression to synthesized speech
+- Japanese text now uses the same 120-character chunking limit as Korean (matches upstream)
+- Model cache moved to a versioned `supertonic_models_v3` directory; stale Supertonic 2 caches are deleted automatically on first use
+
 ## 1.0.0
 
 - Auto-download model files from HuggingFace when not bundled as assets

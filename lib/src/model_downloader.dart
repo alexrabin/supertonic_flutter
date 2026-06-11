@@ -5,7 +5,7 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:path_provider/path_provider.dart';
 
 const String _hfBase =
-    'https://huggingface.co/Supertone/supertonic-2/resolve/main';
+    'https://huggingface.co/Supertone/supertonic-3/resolve/main';
 
 const List<String> _onnxFiles = [
   'onnx/duration_predictor.onnx',
@@ -51,13 +51,18 @@ typedef DownloadProgressCallback = void Function(
 /// from Hugging Face.
 ///
 /// Models are stored in the application support directory under a
-/// `supertonic_models` subdirectory.
+/// `supertonic_models_v3` subdirectory.
 class ModelDownloader {
   ModelDownloader._();
 
   static final ModelDownloader instance = ModelDownloader._();
 
-  static const String _modelDirName = 'supertonic_models';
+  static const String _modelDirName = 'supertonic_models_v3';
+
+  /// Cache directory used by versions of this package that shipped
+  /// Supertonic 2 models. Deleted on first access since its files share
+  /// names with the Supertonic 3 files and would otherwise mask them.
+  static const String _legacyModelDirName = 'supertonic_models';
   static const Duration _connectTimeout = Duration(seconds: 15);
   static const Duration _sendTimeout = Duration(seconds: 15);
   static const Duration _receiveTimeout = Duration(minutes: 5);
@@ -67,6 +72,10 @@ class ModelDownloader {
   Future<Directory> get _modelDir async {
     if (_cachedModelDir != null) return _cachedModelDir!;
     final appDir = await getApplicationSupportDirectory();
+    final legacyDir = Directory('${appDir.path}/$_legacyModelDirName');
+    if (legacyDir.existsSync()) {
+      legacyDir.deleteSync(recursive: true);
+    }
     final dir = Directory('${appDir.path}/$_modelDirName');
     if (!dir.existsSync()) {
       dir.createSync(recursive: true);
